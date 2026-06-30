@@ -1,49 +1,118 @@
 # SkinVision Lite
 
-**Yapay zeka destekli cilt analizi** yapan bir web uygulamasıdır. Kullanıcı cilt tipini seçer, kısa soruları yanıtlar, yüz fotoğrafı yükler; sistem fotoğrafı analiz edip skor ve bakım önerileri sunar.
+Yapay zeka destekli **cilt görüntü analizi** web uygulaması. Kullanıcı cilt tipini seçer, kısa anket doldurur, yüz fotoğrafı yükler; sistem OpenCV ve hibrit ML ile kızarıklık, leke ve akne benzeri bölgeleri analiz eder, skor ve kişisel bakım önerileri sunar.
 
-> Bu proje **eğitim ve bitirme projesi** amaçlıdır. Tıbbi teşhis veya tedavi yerine geçmez.
-
----
-
-## Bu proje ne yapıyor? (Kısaca)
-
-1. Kullanıcı siteye girer, **cilt tipini** seçer (kuru, yağlı, karma vb.)
-2. Birkaç **soru** cevaplar
-3. **Yüz fotoğrafı** yükler veya kameradan çeker
-4. **Backend (Python)** fotoğrafı işler: yüz bulur, kızarıklık/leke/akne benzeri bölgeleri tarar
-5. **Frontend (React)** sonuçları güzel bir sayfada gösterir: skorlar, öneriler, PDF rapor
-6. **Giriş yapmış** kullanıcılar için sonuçlar **veritabanına** kaydedilir; panelden geçmiş, ürün ve rutin takibi yapılır
+> **Uyarı:** Bu proje eğitim ve bitirme projesi amaçlıdır. Tıbbi teşhis veya tedavi önerisi sunmaz. Cilt sağlığınız için dermatoloğa danışın.
 
 ---
 
-## Hangi teknolojiler kullanıldı?
+## İçindekiler
 
-| Bölüm | Ne işe yarar? | Kullandığımız araçlar |
-|--------|----------------|------------------------|
-| **Arayüz (gördüğünüz sayfalar)** | Butonlar, formlar, kartlar | React, Vite, Tailwind CSS |
-| **Sunucu (arka plan)** | Fotoğraf alır, analiz eder, JSON döner | Python, FastAPI |
-| **Görüntü analizi** | Yüz ve cilt bölgelerini bulur | OpenCV, MediaPipe |
-| **Yapay zeka (basit)** | Skorları hesaplar | `weights.json` + özellik çıkarımı |
-| **Veritabanı** | Kullanıcı, analiz, ürün, rutin kayıtları | SQLite |
-| **Giriş sistemi** | Kayıt, giriş, oturum | JWT + bcrypt |
-
-**Önemli:** Node.js burada sadece React projesini çalıştırmak için kullanılır (`npm run dev`). Asıl analiz kodu **Python** ile yazılmıştır; yani backend Node değil.
-
----
-
-## Bilgisayarda ne olmalı?
-
-- **Python 3.10** veya üzeri
-- **Node.js 18** veya üzeri (frontend için)
+1. [Proje özeti](#proje-özeti)
+2. [Nasıl çalışır?](#nasıl-çalışır)
+3. [Teknolojiler](#teknolojiler)
+4. [Kurulum](#kurulum)
+5. [Sayfalar ve kullanıcı akışı](#sayfalar-ve-kullanıcı-akışı)
+6. [Özellikler](#özellikler)
+7. [Analiz süreci (teknik)](#analiz-süreci-teknik)
+8. [Skorlar ne anlama gelir?](#skorlar-ne-anlama-gelir)
+9. [Veritabanı](#veritabanı)
+10. [API referansı](#api-referansı)
+11. [Klasör yapısı](#klasör-yapısı)
+12. [GitHub](#github)
+13. [Sık sorunlar](#sık-sorunlar)
+14. [Sunum notları](#sunum-notları)
 
 ---
 
-## Projeyi nasıl çalıştırırım?
+## Proje özeti
 
-İki terminal açmanız gerekir: biri backend, biri frontend.
+| | |
+|--|--|
+| **Proje adı** | SkinVision Lite |
+| **Tür** | Full-stack web uygulaması |
+| **Frontend** | React 19 + Vite + Tailwind CSS |
+| **Backend** | Python FastAPI |
+| **Veritabanı** | SQLite |
+| **Analiz** | OpenCV + MediaPipe + hibrit ML (`weights.json`) |
 
-### 1. Backend (API sunucusu)
+Proje tek bir klasörde toplanmıştır: `backend/` (Python API) ve `frontend/` (React arayüz) aynı repoda durur.
+
+---
+
+## Nasıl çalışır?
+
+```
+Kullanıcı → React arayüzü → FastAPI backend → OpenCV/ML analiz → JSON sonuç → Ekranda skor + öneri
+```
+
+**Adım adım:**
+
+1. Kullanıcı ana sayfaya girer, **Cildinizi tarayın** veya **Analiz** sayfasına gider.
+2. **Cilt tipi** seçilir (normal, kuru, yağlı, karma, hassas).
+3. **Kısa anket** cevaplanır (cilt hissi, öncelikli ihtiyaç vb.).
+4. **Fotoğraf** yüklenir veya **kamera** ile çekilir (yüz oval çerçeveye hizalanır).
+5. Backend fotoğrafı alır:
+   - Yüz tespiti (MediaPipe)
+   - Cilt maskesi oluşturma
+   - Kızarıklık, leke, akne benzeri bölge tespiti
+   - Bölgesel analiz (alın, yanak, burun, çene…)
+   - Skor hesaplama
+6. Frontend **sonuç sayfasında** skorları, bölgesel açıklamaları, etken madde önerilerini ve PDF rapor linkini gösterir.
+7. Kullanıcı **giriş yapmışsa** analiz SQLite veritabanına kaydedilir; panelden geçmiş görülebilir.
+
+---
+
+## Teknolojiler
+
+### Frontend
+
+| Araç | Görevi |
+|------|--------|
+| **React 19** | Sayfa ve bileşenler |
+| **Vite** | Geliştirme sunucusu, derleme |
+| **Tailwind CSS** | Tasarım (renk, boşluk, responsive) |
+| **React Router** | Sayfa yönlendirme (`/`, `/analiz`, `/panel`…) |
+| **Axios** | Backend API istekleri |
+
+### Backend
+
+| Araç | Görevi |
+|------|--------|
+| **FastAPI** | REST API, dosya yükleme, JSON cevap |
+| **Uvicorn** | API sunucusunu çalıştırma |
+| **OpenCV** | Görüntü işleme, renk/yoğunluk analizi |
+| **MediaPipe** | Yüz tespiti |
+| **NumPy** | Sayısal hesaplamalar |
+| **ReportLab** | PDF rapor üretimi |
+| **python-jose + bcrypt** | JWT oturum, şifre hash |
+| **SQLite** | Kullanıcı ve analiz kayıtları |
+
+### ML (hibrit model)
+
+Tam derin öğrenme modeli yerine **özellik çıkarımı + ağırlıklı skor** kullanılır. Ağırlıklar `backend/ml_model/weights.json` dosyasındadır; `predict.py` bu dosyayı okuyarak skor üretir.
+
+> **Not:** `npm` ve Node.js yalnızca frontend içindir. Analiz kodu **Python** ile yazılmıştır.
+
+---
+
+## Kurulum
+
+### Gereksinimler
+
+- Windows 10/11 (veya macOS / Linux)
+- **Python 3.10+**
+- **Node.js 18+**
+- İnternet (ilk `pip install` ve `npm install` için)
+
+### 1. Projeyi indirin
+
+```powershell
+git clone https://github.com/KULLANICI_ADINIZ/skinvision-lite.git
+cd skinvision-lite
+```
+
+### 2. Backend
 
 ```powershell
 cd backend
@@ -53,16 +122,14 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-Başarılı olunca tarayıcıda şunları açabilirsiniz:
+Kontrol:
 
-- http://localhost:8000 — API çalışıyor mu
-- http://localhost:8000/docs — Tüm endpoint’leri görebileceğiniz Swagger sayfası (sunuma çok yardımcı)
+- http://localhost:8000/health → `{"status":"ok"}` benzeri cevap
+- http://localhost:8000/docs → Swagger (tüm API’ler)
 
-> `backend/models/blaze_face_short_range.tflite` dosyası yüz tespiti için şarttır; projede vardır.
+**Önemli:** `backend/models/blaze_face_short_range.tflite` yüz tespiti için gereklidir; repoda mevcuttur.
 
-### 2. Frontend (web arayüzü)
-
-Yeni bir terminal:
+### 3. Frontend (yeni terminal)
 
 ```powershell
 cd frontend
@@ -70,169 +137,338 @@ npm install
 npm run dev
 ```
 
-Tarayıcıda: **http://localhost:5173**
+Tarayıcı: **http://localhost:5173**
+
+Her iki sunucu da açık olmalıdır. Backend kapalıysa analiz çalışmaz.
 
 ---
 
-## Sitedeki sayfalar
+## Sayfalar ve kullanıcı akışı
 
-| Adres | Ne var? |
-|-------|---------|
-| `/` | Ana sayfa: tanıtım, analiz başlat, bölgesel analiz kartları, etken maddeler |
-| `/analiz` | Sorular + fotoğraf yükleme |
-| `/sonuclar` | Analiz sonuçları, skorlar, rapor indirme |
-| `/giris` | Kayıt ol / giriş yap |
-| `/panel` | Kişisel panel: geçmiş analizler, ürünler, rutin takvimi |
-| `/admin` | Yönetici paneli |
+| Rota | Sayfa | Açıklama |
+|------|-------|----------|
+| `/` | Ana sayfa | Hero, analiz başlat, bölgesel analiz önizlemesi, kişisel rutin tanıtımı, **etken madde rehberi** |
+| `/analiz` | Analiz | Anket → fotoğraf yükleme / kamera |
+| `/sonuclar` | Sonuçlar | Skorlar, bölgesel detay, PDF, kişisel rutin modal |
+| `/giris` | Giriş | Kayıt ol / giriş yap |
+| `/panel` | Kullanıcı paneli | Geçmiş, karşılaştırma, ürünler, rutin takvimi |
+| `/admin` | Admin | Kullanıcı listesi, istatistikler |
+
+### Header menüsü
+
+- Giriş yokken: **Giriş**
+- Giriş varken: kullanıcı adı, **Panelim**, **Admin** (yalnızca admin), **Çıkış**
+- Alt sayfalarda: **Ana sayfa**, sonuçlarda **Yeni Analiz**
 
 ---
 
-## Özellikler (sunumda anlatabileceğiniz başlıklar)
+## Özellikler
 
 ### Cilt analizi
-- 5 cilt tipi (normal, kuru, yağlı, karma, hassas)
-- Anket ile kişiselleştirme
-- Fotoğraf veya kamera
-- Kızarıklık, leke, akne benzeri bölge tespiti
-- 6 bölgesel kart: alın, yanak, burun, çene, göz altı, kızarıklık
-- Sağlık skoru (yüksek skor = daha iyi görünüm)
-- Kişisel sabah/akşam rutini önerisi
+
+- 5 cilt tipi seçimi
+- Caudalie tarzı kısa anket (cilt hissi, öncelik)
+- Fotoğraf yükleme veya canlı kamera
+- Fotoğraf kuralları modalı (makyajsız, iyi ışık, tam yüz)
+- Yüz tespiti ve cilt maskesi
+- Kızarıklık, leke, akne benzeri bölge işaretleme
+- Kalibre edilmiş sağlık skorları
+- Bölgesel kartlar: alın, yanak, burun/T bölgesi, çene, göz altı, kızarıklık
+- Kişiselleştirilmiş sabah / akşam rutini
 - PDF rapor indirme
 
-### Kullanıcı paneli (giriş gerekir)
-- Analiz geçmişi ve iki analizi karşılaştırma
-- Kullandığınız ürünleri kaydetme
-- Rutin takvimi (sabah / akşam / yüz yıkama — yuvarlak işaretlerle)
+### Etken madde rehberi (ana sayfa)
 
-### Veritabanı
-Backend ilk açıldığında `backend/skinvision.db` dosyası **otomatik oluşur**.
+Ana sayfada **“Hangi madde ne için kullanılır?”** bölümünde kartlar halinde:
 
-| Tablo | Ne tutar? |
-|-------|-----------|
-| `users` | Kayıtlı kullanıcılar |
-| `analyses` | Yapılan analizler (giriş yapılmışsa) |
-| `user_products` | Kullanıcının ürünleri |
-| `routine_logs` | Günlük rutin işaretleri |
+| Madde | Kısa fayda |
+|-------|------------|
+| Hyaluronik Asit | Nem, kuru cilt |
+| Salisilik Asit | Gözenek, akne eğilimi |
+| Niacinamide | Bariyer, kızarıklık, gözenek |
+| Retinol | Hücre yenilenmesi, gece bakımı |
+| Glikolik Asit (AHA) | Ölü hücre arındırma |
+| C Vitamini | Antioksidan, aydınlatma |
 
-**Not:** Giriş yapmadan analiz yaparsanız sonuç ekranda görünür ama veritabanına **kaydedilmez**.
+### Kullanıcı hesabı
 
-### Admin
-İlk çalıştırmada hazır admin hesabı:
+- Kayıt / giriş (JWT)
+- Giriş yapılınca analizler otomatik kaydedilir
+- **Panel:** analiz geçmişi, 2 analizi karşılaştırma, ürün takibi, rutin takvimi
+- Rutin takvimi: sabah (sarı), akşam (mor), yüz yıkama (mavi) yuvarlak işaretler
 
-| | |
-|--|--|
+### Admin paneli
+
+İlk backend açılışında oluşturulur:
+
+| Alan | Değer |
+|------|--------|
 | Kullanıcı adı | `admin` |
 | Şifre | `admin123` |
 
----
-
-## API nasıl çalışıyor?
-
-En önemli endpoint:
-
-```
-POST /analyze
-```
-
-- **Gönderilen:** fotoğraf dosyası + cilt tipi (`skin_type`)
-- **Dönen:** skorlar, şiddet seviyeleri, işaretli görsel URL’leri, rutin önerileri, PDF linki
-
-Giriş yapılmışsa istekte şu başlık olur:
-
-```
-Authorization: Bearer <token>
-```
-
-Bu durumda analiz ayrıca veritabanına kaydedilir (`saved_analysis_id` döner).
-
-Diğer endpoint grupları:
-- `/auth` — kayıt, giriş
-- `/panel` — kullanıcı paneli verileri
-- `/admin` — yönetici istatistikleri
-
-Detay için: http://localhost:8000/docs
-
-### Skorlar nasıl okunur?
-
-- Backend **yoğunluk skoru** verir (0–100, yüksek = daha fazla sorun sinyali)
-- Ekranda gördüğünüz **sağlık skoru** = `100 - yoğunluk` (yüksek = daha iyi)
+Admin: toplam kullanıcı, analiz, ürün, rutin sayıları; kullanıcı listesi ve analiz geçmişi.
 
 ---
 
-## Klasör yapısı (projeyi anlamak için)
+## Analiz süreci (teknik)
+
+Backend `POST /analyze` çağrıldığında sıra kabaca şöyledir:
+
+1. **Yükleme** — Fotoğraf `uploads/` klasörüne kaydedilir.
+2. **Yüz tespiti** — MediaPipe ile yüz kutusu bulunur; bulunamazsa hata döner.
+3. **Cilt maskesi** — Yüz bölgesinde cilt pikselleri ayrılır.
+4. **Tespit modülleri**
+   - `redness_detection.py` — kızarıklık
+   - `spot_detection.py` — leke / pigmentasyon
+   - `acne_detection.py` — akne benzeri bölgeler
+5. **Bölgesel analiz** — `zone_analysis.py` ile alın, yanak vb.
+6. **ML skor** — `ml_model/predict.py` + `weights.json`
+7. **Kalibrasyon** — `utils.py` içinde skorlar kullanıcı dostu aralığa çekilir
+8. **Çıktı** — İşaretli görsel `outputs/`, PDF rapor, öneriler ve rutin metinleri JSON olarak döner
+
+---
+
+## Skorlar ne anlama gelir?
+
+### Backend (yoğunluk skoru)
+
+| Skor alanı | Anlamı |
+|------------|--------|
+| `redness_score` | Kızarıklık yoğunluğu |
+| `spot_score` | Leke yoğunluğu |
+| `acne_score` | Akne benzeri bölge yoğunluğu |
+| `overall_score` | Genel yoğunluk |
+
+**0–100 arası; yüksek = daha belirgin sorun sinyali.**
+
+### Frontend (sağlık skoru)
+
+Ekranda gördüğünüz skor:
+
+```
+Sağlık skoru = 100 - yoğunluk skoru
+```
+
+Yüksek sağlık skoru = daha iyi görünüm. Sağlıklı cilt fotoğraflarında genelde **80+** hedeflenir (kalibrasyon ile).
+
+### Şiddet seviyeleri
+
+`low` / `medium` / `high` — yoğunluğa göre otomatik atanır.
+
+---
+
+## Veritabanı
+
+Dosya: `backend/skinvision.db` (ilk çalıştırmada otomatik oluşur, GitHub’a gitmez).
+
+| Tablo | Alanlar (özet) |
+|-------|----------------|
+| `users` | id, username, email, password_hash, is_admin, created_at |
+| `analyses` | user_id, skin_type, skorlar, result_json, image_url, created_at |
+| `user_products` | name, category, ingredient, started_at, notes |
+| `routine_logs` | log_date, morning_done, evening_done, face_wash_done |
+
+Giriş yapmadan yapılan analizler **kaydedilmez**; yalnızca sonuç sayfasında görünür.
+
+---
+
+## API referansı
+
+Swagger: http://localhost:8000/docs
+
+### Genel
+
+| Metot | Endpoint | Açıklama |
+|-------|----------|----------|
+| GET | `/health` | Sunucu durumu |
+| POST | `/analyze` | Fotoğraf analizi (`file`, `skin_type`) |
+
+### Kimlik doğrulama — `/auth`
+
+| Metot | Endpoint | Açıklama |
+|-------|----------|----------|
+| POST | `/auth/register` | Kayıt (username, email, password) |
+| POST | `/auth/login` | Giriş → JWT token |
+| GET | `/auth/me` | Oturum bilgisi (Bearer token) |
+
+### Panel — `/panel` (giriş gerekli)
+
+| Metot | Endpoint | Açıklama |
+|-------|----------|----------|
+| GET | `/panel/analyses` | Analiz geçmişi |
+| GET | `/panel/analyses/{id}` | Tek analiz detayı |
+| GET / POST | `/panel/products` | Ürün listesi / ekleme |
+| DELETE | `/panel/products/{id}` | Ürün sil |
+| GET / PUT | `/panel/routine` | Rutin takvimi (`?month=2026-06`) |
+
+### Admin — `/admin` (admin gerekli)
+
+| Metot | Endpoint | Açıklama |
+|-------|----------|----------|
+| GET | `/admin/stats` | İstatistikler |
+| GET | `/admin/users` | Kullanıcı listesi |
+| GET | `/admin/users/{id}/analyses` | Kullanıcının analizleri |
+
+### Örnek analiz cevabı (kısaltılmış)
+
+```json
+{
+  "success": true,
+  "scores": {
+    "redness_score": 19,
+    "spot_score": 11,
+    "acne_score": 17,
+    "overall_score": 16
+  },
+  "severity": {
+    "redness": "low",
+    "spots": "low",
+    "acne": "low"
+  },
+  "detected_regions": {
+    "redness_count": 3,
+    "spot_count": 1,
+    "acne_count": 2
+  },
+  "output_image_url": "/outputs/result_abc123.png",
+  "report_url": "/outputs/report_abc123.pdf",
+  "personalized_routine": { },
+  "saved_analysis_id": 5
+}
+```
+
+`saved_analysis_id` yalnızca giriş yapılmışsa gelir.
+
+---
+
+## Klasör yapısı
 
 ```
 skinvision-lite/
-├── backend/                 ← Python API (analiz burada yapılır)
-│   ├── main.py              ← Uygulamanın giriş kapısı, /analyze burada
-│   ├── database.py          ← SQLite veritabanı işlemleri
-│   ├── auth.py              ← Giriş / JWT
-│   ├── routers/             ← auth, panel, admin yolları
-│   ├── image_processing/    ← OpenCV ile fotoğraf işleme
-│   ├── ml_model/            ← weights.json, skor hesaplama
-│   ├── services/            ← ürün önerisi, rutin metinleri
-│   ├── reports/             ← PDF oluşturma
-│   └── models/              ← MediaPipe yüz modeli (.tflite)
+├── .gitignore
+├── README.md
 │
-├── frontend/                ← React arayüz (kullanıcının gördüğü kısım)
-│   ├── src/pages/           ← Sayfalar (Ana sayfa, Panel, Giriş...)
-│   ├── src/components/      ← Kartlar, header, anket vb.
-│   ├── src/api/             ← Backend’e istek atan dosyalar
-│   └── public/              ← Fotoğraflar, ikonlar
+├── backend/
+│   ├── main.py                 # FastAPI giriş, /analyze
+│   ├── auth.py                 # JWT, şifre
+│   ├── database.py             # SQLite
+│   ├── schemas.py              # Pydantic modelleri
+│   ├── requirements.txt
+│   ├── skinvision.db           # (yerel, gitignore)
+│   │
+│   ├── routers/
+│   │   ├── auth_routes.py
+│   │   ├── panel_routes.py
+│   │   └── admin_routes.py
+│   │
+│   ├── image_processing/
+│   │   ├── pipeline.py         # Ana analiz akışı
+│   │   ├── face_detection.py
+│   │   ├── skin_mask.py
+│   │   ├── redness_detection.py
+│   │   ├── spot_detection.py
+│   │   ├── acne_detection.py
+│   │   ├── zone_analysis.py
+│   │   └── utils.py            # Skor kalibrasyonu
+│   │
+│   ├── ml_model/
+│   │   ├── weights.json        # ML ağırlıkları
+│   │   └── predict.py
+│   │
+│   ├── services/
+│   │   ├── recommendations.py
+│   │   └── routine_generator.py
+│   │
+│   ├── reports/
+│   │   └── report_generator.py
+│   │
+│   ├── models/
+│   │   └── blaze_face_short_range.tflite
+│   │
+│   ├── uploads/                # Yüklenen fotoğraflar (gitignore)
+│   └── outputs/                # Sonuç görselleri, PDF (gitignore)
 │
-└── README.md                ← Bu dosya
+└── frontend/
+    ├── package.json
+    ├── vite.config.js
+    ├── public/                 # Görseller, yüz modeli fotoğrafı
+    └── src/
+        ├── App.jsx             # Rotalar
+        ├── pages/              # Home, Analiz, Sonuçlar, Giriş, Panel, Admin
+        ├── components/         # UI bileşenleri
+        ├── api/                # skinApi, authApi, panelApi
+        ├── context/            # AuthContext
+        └── data/               # ingredients.js, skinQuestions.js
 ```
 
 ---
 
-## GitHub’a yüklerken
+## GitHub
 
-Tek repo yeterli; backend ve frontend birlikte gider.
+### Repoya dahil olmayanlar
 
-**Yüklenmeyenler** (`.gitignore` sayesinde):
-- `backend/venv/` — herkes kendi bilgisayarında kurar
-- `frontend/node_modules/` — `npm install` ile gelir
-- `backend/skinvision.db` — her bilgisayarda backend açılınca yeniden oluşur
-- `backend/uploads/`, `backend/outputs/` — yüklenen fotoğraflar
+`.gitignore` sayesinde:
+
+- `backend/venv/`
+- `frontend/node_modules/`
+- `frontend/dist/`
+- `backend/skinvision.db`
+- `backend/uploads/*` (`.gitkeep` hariç)
+- `backend/outputs/*` (`.gitkeep` hariç)
+- `.env` dosyaları
+
+### VS Code ile yükleme
+
+1. GitHub’da boş repo oluşturun (README eklemeyin).
+2. VS Code → Source Control → **Publish to GitHub**.
+3. Repoyu seçin, public/private belirleyin.
+
+### Terminal ile
 
 ```powershell
-git init
-git add .
-git commit -m "SkinVision Lite: cilt analizi projesi"
 git remote add origin https://github.com/KULLANICI_ADINIZ/skinvision-lite.git
 git push -u origin main
 ```
 
-Başka bilgisayarda: `git clone` → yukarıdaki kurulum adımlarını tekrarlayın.
+---
+
+## Sık sorunlar
+
+| Sorun | Olası neden | Çözüm |
+|-------|-------------|--------|
+| Analiz butonu çalışmıyor | Backend kapalı | `uvicorn main:app --reload --port 8000` |
+| CORS / ağ hatası | Yanlış port | Backend 8000, frontend 5173 |
+| Yüz bulunamadı | Kötü fotoğraf | Yüz net, iyi ışık, makyajsız |
+| Panel boş | Giriş yok veya kayıt yok | Giriş yapıp tekrar analiz yapın |
+| `pip install` hata | Eski Python | Python 3.10+ kullanın |
+| `npm install` hata | Eski Node | Node 18+ kullanın |
+| Admin menüsü yok | Normal kullanıcı | `admin` / `admin123` ile giriş |
 
 ---
 
-## Sık karşılaşılan sorunlar
+## Sunum notları
 
-| Sorun | Çözüm |
-|-------|--------|
-| Analiz çalışmıyor | Backend açık mı? `http://localhost:8000/health` kontrol edin |
-| “Giriş yapmanız gerekiyor” | Panel için önce `/giris` sayfasından kayıt olun |
-| Analiz kaydedilmiyor | Giriş yapmadan analiz yaptıysanız normal; önce giriş yapın |
-| Yüz bulunamadı hatası | Yüz net görünsün, iyi ışık, makyajsız fotoğraf deneyin |
+### 30 saniyelik tanıtım
+
+> “SkinVision Lite, kullanıcının yüz fotoğrafını analiz eden bir web uygulamasıdır. React ile arayüz, Python FastAPI ile API geliştirdik. OpenCV ve MediaPipe ile yüz ve cilt bölgelerini tespit ediyoruz; skorlar hibrit ML modeliyle hesaplanıyor. Kullanıcılar kayıt olup analiz geçmişini, ürünlerini ve günlük rutinlerini panelden takip edebiliyor.”
+
+### Demo sırası önerisi
+
+1. Ana sayfa → etken maddeler, bölgesel analiz kartları
+2. Analiz akışı → anket + fotoğraf
+3. Sonuç sayfası → skorlar, PDF
+4. Kayıt / giriş → panel → geçmiş karşılaştırma
+5. (İsteğe bağlı) Admin paneli
+6. Swagger (`/docs`) — API’yi göstermek için
+
+### Sınırlılıklar (dürüstçe söyleyin)
+
+- Eğitim amaçlı; klinik dermatoloji sistemi değil
+- Işık, makyaj ve kamera kalitesi sonucu etkiler
+- Gerçek hastalık teşhisi için uzman gerekir
 
 ---
 
-## Sunum için kısa cümle örneği
+## Lisans ve sorumluluk
 
-> “Frontend’i React ile, backend’i Python FastAPI ile geliştirdik. Fotoğraf OpenCV ve MediaPipe ile işleniyor; skorlar hibrit ML modeliyle hesaplanıyor. Kullanıcı verileri SQLite veritabanında tutuluyor; panelden aylık karşılaştırma ve rutin takibi yapılabiliyor.”
-
----
-
-## Uyarı
-
-Bu uygulama **demo / eğitim** amaçlıdır. Gerçek cilt hastalığı şüphesinde mutlaka bir dermatoloğa başvurun.
-
----
-
-## İleride eklenebilecekler
-
-- Aylık skor grafiği
-- Ürün kullanımı ile skor karşılaştırması
-- E-posta ile şifre sıfırlama
-- Canlı internete yayınlama (deploy)
+Bu yazılım demo ve eğitim amaçlıdır. Üretim ortamında tıbbi karar desteği olarak kullanılmamalıdır.

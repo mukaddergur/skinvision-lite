@@ -17,7 +17,7 @@ export const INGREDIENTS = [
   },
   {
     id: 'niacinamide',
-    title: 'Niacinamide Nedir, Ne İşe Yarar?',
+    title: 'Niacinamide',
     description: 'Cilt bariyerini güçlendirir, kızarıklığı azaltmaya yardımcı olur ve gözenek görünümünü dengeler.',
     gradient: 'from-rose-100 to-pink-200',
     icon: '💧',
