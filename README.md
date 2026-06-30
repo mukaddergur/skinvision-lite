@@ -1,5 +1,9 @@
 # SkinVision Lite
 
+> **Bu dosya ana proje dokümantasyonudur** (kök dizin: `skinvision-lite/README.md`).  
+> GitHub’da `frontend/` klasörüne girerseniz oradaki kısa README’yi görürsünüz — tam anlatım **burada**.  
+> Alt klasör özetleri: [backend/README.md](backend/README.md) · [frontend/README.md](frontend/README.md)
+
 **Yapay zeka destekli cilt görüntü analizi** web uygulaması.
 
 Kullanıcı cilt tipini seçer, kısa anket doldurur, yüz fotoğrafı yükler. Sistem fotoğrafı analiz ederek kızarıklık, leke ve akne benzeri bölgeleri tespit eder; skor, kişisel bakım önerisi ve PDF rapor sunar. Giriş yapan kullanıcılar analiz geçmişini panelden takip edebilir.
@@ -552,7 +556,9 @@ Tarayıcı: **http://localhost:5173**
 
 ```
 skinvision-lite/
-├── README.md
+├── README.md                      # ANA dokümantasyon (buradan başlayın)
+├── backend/README.md              # Backend özet dokümantasyonu
+├── frontend/README.md             # Frontend özet dokümantasyonu
 ├── .gitignore
 │
 ├── backend/
