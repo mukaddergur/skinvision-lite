@@ -1,0 +1,36 @@
+{
+  "redness": {
+    "bias": 2.0,
+    "weights": {
+      "red_ratio": 22.0,
+      "a_channel_mean": 8.0,
+      "red_std": 6.0,
+      "saturation_mean": 7.0,
+      "texture_var": 2.5
+    }
+  },
+  "spots": {
+    "bias": 1.0,
+    "weights": {
+      "dark_ratio": 18.0,
+      "l_channel_std": 10.0,
+      "contrast": 9.0,
+      "entropy": 5.0,
+      "texture_var": 3.5
+    }
+  },
+  "acne": {
+    "bias": 1.5,
+    "weights": {
+      "high_freq_ratio": 16.0,
+      "local_contrast": 12.0,
+      "red_spot_overlap": 10.0,
+      "blob_count_norm": 7.0,
+      "texture_var": 4.0
+    }
+  },
+  "blend": {
+    "opencv_weight": 0.5,
+    "ml_weight": 0.5
+  }
+}

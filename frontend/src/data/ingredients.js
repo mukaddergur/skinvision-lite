@@ -1,0 +1,88 @@
+export const INGREDIENTS = [
+  {
+    id: 'hyaluronic',
+    title: 'Hyaluronik Asit',
+    description: 'Nem tutma kapasitesi yüksektir. Kuru ve dehidre ciltlerde yoğun nemlendirme için idealdir.',
+    gradient: 'from-cyan-100 to-teal-200',
+    icon: '💎',
+    image: '/ingredients/ingredient-hyaluronic.jpg',
+  },
+  {
+    id: 'salicylic',
+    title: 'Salisilik Asit',
+    description: 'Gözenekleri derinlemesine temizler, akne eğilimli ciltlerde yağ ve kir birikimini azaltır.',
+    gradient: 'from-sky-100 to-blue-200',
+    icon: '🧴',
+    image: '/ingredients/ingredient-salicylic.jpg',
+  },
+  {
+    id: 'niacinamide',
+    title: 'Niacinamide Nedir, Ne İşe Yarar?',
+    description: 'Cilt bariyerini güçlendirir, kızarıklığı azaltmaya yardımcı olur ve gözenek görünümünü dengeler.',
+    gradient: 'from-rose-100 to-pink-200',
+    icon: '💧',
+    image: '/ingredients/ingredient-niacinamide.jpg',
+  },
+  {
+    id: 'retinol',
+    title: 'Retinol',
+    description: 'Hücre yenilenmesini destekler, ince çizgi ve leke görünümünü azaltmaya yardımcı olur. Gece rutininde kullanılır.',
+    gradient: 'from-amber-100 to-orange-200',
+    icon: '🌙',
+    image: '/ingredients/ingredient-retinol.jpg',
+  },
+  {
+    id: 'glycolic',
+    title: 'Glikolik Asit (AHA)',
+    description: 'Ölü hücreleri nazikçe arındırır, cilt tonunu eşitler ve parlaklık kazandırır. Haftada 2–3 kez kullanılır.',
+    gradient: 'from-yellow-100 to-amber-200',
+    icon: '✨',
+    image: '/ingredients/ingredient-glycolic.jpg',
+  },
+  {
+    id: 'vitamin-c',
+    title: 'C Vitamini',
+    description: 'Antioksidan koruma sağlar, cilt tonunu aydınlatır. Sabah rutininde SPF ile birlikte kullanılır.',
+    gradient: 'from-orange-100 to-amber-200',
+    icon: '☀️',
+    image: '/ingredients/ingredient-vitamin-c.jpg',
+  },
+];
+
+export const SKIN_TYPES = [
+  {
+    id: 'normal',
+    label: 'Normal',
+    tag: 'Dengeli cilt',
+    desc: 'Dengeli, ne çok yağlı ne çok kuru',
+    description: 'Gözenekler ve nem dengesi idealdir. Hafif nemlendirici ve günlük SPF ile bakım yeterlidir; aşırı yağlı veya kurutucu ürünlerden kaçının.',
+  },
+  {
+    id: 'dry',
+    label: 'Kuru',
+    tag: 'Nem desteği',
+    desc: 'Sıkı hisseden, pul pul dökülen cilt',
+    description: 'Cilt bariyeri zayıf olabilir; hyaluronik asit ve ceramide içeren zengin nemlendiriciler önerilir. Sıcak su ve sert temizleyicilerden uzak durun.',
+  },
+  {
+    id: 'oily',
+    label: 'Yağlı',
+    tag: 'Gözenek & sebum',
+    desc: 'Parlak, gözenekli T bölgesi',
+    description: 'T bölgesinde yağlanma ve gözenek belirginliği fazladır. Salisilik asit ve hafif jel temizleyiciler; yağsız, komedojenik olmayan formüller tercih edilir.',
+  },
+  {
+    id: 'combination',
+    label: 'Karma',
+    tag: 'Karma yapı',
+    desc: 'T bölgesi yağlı, yanaklar normal/kuru',
+    description: 'Farklı bölgeler farklı ihtiyaç gerektirir: T bölgesine hafif ürünler, yanaklara daha zengin nem. Bölgesel bakım veya dengeleyici serumlar idealdir.',
+  },
+  {
+    id: 'sensitive',
+    label: 'Hassas',
+    tag: 'Yatıştırıcı bakım',
+    desc: 'Kolay kızaran, reaktif cilt',
+    description: 'Parfüm ve alkol içeren ürünler tahrişi artırabilir. Centella, aloe ve minimal içerikli yatıştırıcı formüller; yeni ürünleri yavaşça test edin.',
+  },
+];
