@@ -8,7 +8,7 @@ Alt klasör özetleri: [backend/README.md](backend/README.md) · [frontend/READM
 
 ---
 
-## 🚀 Proje Hakkında
+## Proje Hakkında
 
 Bu proje, kullanıcının yüklediği fotoğrafları analiz ederek cilt sağlığı üzerine görselleştirilmiş veriler sunar. Kullanıcı geçmişini takip edebilir, analiz raporlarını görüntüleyebilir; yönetici paneli üzerinden tüm sistem verileri izlenebilir.
 
@@ -28,7 +28,7 @@ Proje **full-stack** yapıdadır: `backend/` (Python) ve `frontend/` (React) ayn
 
 ---
 
-## 🛠 Kullanılan Teknolojiler
+## Kullanılan Teknolojiler
 
 ### Frontend
 
@@ -55,7 +55,7 @@ Proje **full-stack** yapıdadır: `backend/` (Python) ve `frontend/` (React) ayn
 
 ---
 
-## 📂 Klasör Yapısı
+## Klasör Yapısı
 
 ```
 skinvision-lite/
@@ -122,7 +122,7 @@ skinvision-lite/
 
 ---
 
-## ⚙️ Kurulum ve Çalıştırma
+## Kurulum ve Çalıştırma
 
 ### Gereksinimler
 
@@ -176,7 +176,7 @@ VITE_API_URL=http://localhost:8000
 
 ---
 
-## 🔑 Uygulama Özellikleri
+## Uygulama Özellikleri
 
 ### Akıllı Analiz
 
@@ -225,7 +225,7 @@ VITE_API_URL=http://localhost:8000
 
 ---
 
-## 📡 API Özeti
+## API Özeti
 
 Canlı liste: **http://localhost:8000/docs**
 
@@ -245,7 +245,7 @@ Giriş yapılmış analiz isteklerinde `Authorization: Bearer <token>` header'ı
 
 ---
 
-## 🗄️ Veritabanı
+## Veritabanı
 
 Dosya: `backend/skinvision.db` (otomatik oluşur, GitHub'a gitmez)
 
@@ -258,7 +258,7 @@ Dosya: `backend/skinvision.db` (otomatik oluşur, GitHub'a gitmez)
 
 ---
 
-## 🛡️ Yasal Uyarı
+## Yasal Uyarı
 
 **Önemli:** Bu proje eğitim ve görüntü işleme prototipi amacıyla geliştirilmiştir. Tıbbi bir teşhis aracı değildir. Cilt sorunlarınız için lütfen bir dermatoloğa danışın.
 
